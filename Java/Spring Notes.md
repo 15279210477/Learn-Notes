@@ -80,7 +80,7 @@ context.getBean("xxx");	// 获取指定bean对象
 <import resource="bean2.xml"/>
 ```
 
-
+----------
 
 ## 三、依赖注入
 

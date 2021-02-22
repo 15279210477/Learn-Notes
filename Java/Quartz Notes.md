@@ -92,8 +92,7 @@ Quartz中的触发器用来告诉调度程序作业什么时候触发。
   用于配置CronTrigger实例。由7个子表达式组成的字符串，描述了时间表的详情信息。
   格式：[秒] [分] [小时] [日] [月] [周] [年]
   
-  ![20210117_1.png](E:\Github\Notes-Images\Yosoro\20210117_1.png)
+  ![20210117_1.png](..\Images\20210117_1.png)
   
-  ![20210117_2.png](E:\Github\Notes-Images\Yosoro\20210117_2.png)
+  ![20210117_2.png](..\Images\20210117_2.png)
   
-  ![20210117_3.png](E:\Github\Notes-Images\Yosoro\20210117_3.png)
