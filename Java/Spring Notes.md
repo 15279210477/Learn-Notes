@@ -209,6 +209,8 @@ context.getBean("xxx");	// 获取指定bean对象
 
 **@Configration**：代表是个配置类，本身属于@component
 
+- proxyBeanMethod：代理bean方法，默认true（从容器里取bean对象）
+
 **@Import(xxx.class)**：导入其他配置类（同xml）
 
 **@Bean**：注册一个bean（同xml），方法名同bean标签id属性，返回值同bean标签的class属性（用于java类方式注册）
