@@ -69,6 +69,8 @@
 
 @**SessionAttribute**：用于多次执行控制器方法间的参数共享。
 
+@**RequestAttruibute**：获取请求域中的属性。
+
 ----
 
 ## 三、配置自定义转换器
@@ -193,6 +195,8 @@ xxx implements HandlerInterceptor {
 
 #### 7.4、配置拦截器
 
+##### 7.4.1、xml**方式**
+
 ```xml
 <mvc:interceptors>
 	<mvc:interceptor>
@@ -206,9 +210,43 @@ xxx implements HandlerInterceptor {
 </mvc:interceptors>
 ```
 
+#### 7.4.2、**javaconfig方式**
 
+```java
+/**
+ * 1、编写一个拦截器实现HandlerInterceptor接口
+ * 2、拦截器注册到容器中（实现WebMvcConfigurer的addInterceptors）
+ * 3、指定拦截规则【如果是拦截所有，静态资源也会被拦截】
+ */
+@Configuration
+public class AdminWebConfig implements WebMvcConfigurer {
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LoginInterceptor())
+                .addPathPatterns("/**")  //所有请求都被拦截包括静态资源
+                .excludePathPatterns("/","/login","/css/**","/fonts/**","/images/**","/js/**"); 
+    }
+}
+```
 
+#### 7.5、拦截器原理
 
+1. 根据当前请求，找到**HandlerExecutionChain【**可以处理请求的handler以及handler的所有 拦截器】
 
+2. 先来**顺序执行** 所有拦截器的 preHandle方法
 
+- 如果当前拦截器prehandler返回为true。则执行下一个拦截器的preHandle
+- 如果当前拦截器返回为false。直接   倒序执行所有已经执行了的拦截器的  afterCompletion；
+
+3. 如果任何一个拦截器返回false。直接跳出不执行目标方法
+
+4. **所有拦截器都返回True。执行目标方法**
+
+5. **倒序执行所有拦截器的postHandle方法。**
+
+6. **前面的步骤有任何异常都会直接倒序触发** afterCompletion
+
+7. 页面成功渲染完成以后，也会倒序触发 afterCompletion
+
+![2021030102](F:\Learn\Learn-Notes\Images\2021030102.png)
 
