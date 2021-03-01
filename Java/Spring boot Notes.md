@@ -44,7 +44,7 @@
 
 - 查询自动配置报告。配置文件debug=true。Negative（不生效）\Positive（生效）
 - 参照文档修改配置项
-  - https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html#common-application-properties
+  - [spring官网](https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html#common-application-properties)
 
 --------
 
@@ -80,3 +80,6 @@ SpringMvc的分析从**org.springframework.web.servlet.DispatcherServlet ->doDis
 
 
 
+### 参考文档地址：
+
+[springboot语雀](https://www.yuque.com/atguigu/springboot/qb7hy2)
