@@ -1,0 +1,34 @@
+# Centos Notes
+
+-----
+
+## 一、设置网络
+
+/etc/sysconfig/network-script/{网卡名}
+
+```txt
+网络地址转换/DHCP
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=dhcp
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILUTE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=enp0s3
+UUID=XXX
+DEVICE=enp0s3
+ONBOOT=yes
+设置静态ip
+BOOTPROTO=static
+IPADDR=192.168.1.160
+NETMASK=255.255.255.0
+GATEWAY=192.168.1.1
+DNS1=119.29.29.29
+DNS2=8.8.8.8
+```
+
