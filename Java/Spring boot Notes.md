@@ -6,12 +6,12 @@
 
 #### 1.1、SpringBoot的优点
 
-- 创建独立Spring应用
-- 内嵌web服务器
-- 自动starter依赖，简化构建配置
-- 自动配置Spring以及第三方功能
-- 提供生产级别的监控、健康检查及外部化配置
-- 无代码生成、无需编写XML
+- **约定优于配置**。按照Spring Boot的方式进行简单的配置后，功能就可以直接使用了。
+- **自动装配**。Spring Boot在启动时会自动探测类路径下的各种类型，实现类型的自动装配，无需开发者再通过XML或是注解进行显式的类型装配了，这一点要拜@EnableAutoConfiguration注解或是更为全面的@SpringBootApplication注解所赐。
+- **内嵌各种Servlet容器**。Spring Boot内嵌了Tomcat、Jetty与Undertow等Servlet容器，使得我们可以像开发普通的Java应用那样直接通过main方法来启动容器，甚至可以直接通过jar包而非war包的形式就能够实现快速部署，不必再依赖于外部的Servlet容器。
+- **yml配置的支持**。yml或是yaml的全称是YAML Ain't Markup Language的简称（有意思的是，当初在开发这门语言时，其简称实际上是Yet Another Markup Language），新的简称采取了递归的方式。这种新的语言可以看作是传统的properties配置文件的一种有益补充，它通过缩进的方式来表示层次化的配置项，相比于传统的properties属性文件来说，其层次感会更好一些；当然，顺便也可以让我们少敲一些字母。
+- **提供了各种starter便于功能的开箱即用**。围绕着Spring Boot生态圈目前已经涌现出了不计其数的starter，这样我们只需将相应的starter配置项引入到项目中即可很方便地使用对应的功能。
+- **提供了各种度量**。Spring Boot提供了各种度量属性，便于我们查看当前项目的运行情况以及系统使用情况。
 
 #### 1.2、依赖管理
 

@@ -53,23 +53,23 @@
 
 - required：是否必须有请求体。默认值：true。当为true时，get请求会报错，取值为false，get请求得到null。
 
-@**ReponseBody**：用于将Controller的方法返回的对象，通过HttpMessageConverter接口转换为指定格式的数据如：json、xml等，通过response响应给客户端。
+**@ReponseBody**：用于将Controller的方法返回的对象，通过HttpMessageConverter接口转换为指定格式的数据如：json、xml等，通过response响应给客户端。
 
 **@PathVaribale**：用于绑定url的占位符。是springMvc支持rest风格URL的一个重要标志。
 
-@**RequestHeader**：用于获取请求头信息。
+**@RequestHeader**：用于获取请求头信息。
 
 - value：提供消息头名称
 
-@**CookieValue**：用于把指定cookie名称的值传入控制器方法参数。
+**@CookieValue**：用于把指定cookie名称的值传入控制器方法参数。
 
 - value：提供cookie名称
 
-@**ModelAttribute**；注解在方法上：表示当前方法会在控制器方法之前执行。注解在属性上：获取指定的数据给参数赋值。
+**@ModelAttribute**；注解在方法上：表示当前方法会在控制器方法之前执行。注解在属性上：获取指定的数据给参数赋值。
 
-@**SessionAttribute**：用于多次执行控制器方法间的参数共享。
+**@SessionAttribute**：用于多次执行控制器方法间的参数共享。
 
-@**RequestAttruibute**：获取请求域中的属性。
+**@RequestAttruibute**：获取请求域中的属性。
 
 ----
 
@@ -231,7 +231,7 @@ public class AdminWebConfig implements WebMvcConfigurer {
 
 #### 7.5、拦截器原理
 
-1. 根据当前请求，找到**HandlerExecutionChain【**可以处理请求的handler以及handler的所有 拦截器】
+1. 根据当前请求，找到**HandlerExecutionChain**【可以处理请求的handler以及handler的所有 拦截器】
 
 2. 先来**顺序执行** 所有拦截器的 preHandle方法
 

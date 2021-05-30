@@ -350,9 +350,37 @@ ApplicationContext context = new AnnotationConfigApplicationContext(xxx.class);
 </aop:config>
 ```
 
+### 8.3、事务的传播特性
+
+```xml
+<tx:advice id="xxAdvice" transaction-manager="xxTransactionManager">
+    <tx:attributes>
+        <tx:method name="hello*" propagation="NESTED"/>
+        <tx:method name="*" propagation="REQUIRES"/>
+    </tx:attributes>
+</tx:advice>
+```
+
+````java
+public void testPropagation(User user) {
+  testDAO.insertUser(user);
+  try{
+    innerClass.hello();
+  } catch(RuntimeException e){
+    // handle exception
+  }
+}
+````
 
 
 
+1.当hello方法的propagation属性设置为**REQUIRED**时，由于调用方已经有了事务，所以hello方法将与testPropagation方法共享一个事务（物理事务），但是在逻辑上hello方法与testPropagation将拥有自己的逻辑事务，这就意味着hello方法的事务异常会导致testPropagation方法事务也会回滚，最终导致整条物理事务执行失败（与我们平时的大多数需求相同），---需要注意的是这时候被调用方法与调用者方法必须在两个不同类中，否则不起作用！！！
+
+2.当hello方法的propagation属性设置为**NESTED**时，这种传播特性是基于JDBC提供的savepoint特性，所以对其他非JDBC数据源无效。testPropagation在调用hello方法之前会保存一个savepoint，该特性会使得testPropagation方法与hello方法具有比REQUIRED更高的独立性，因为testPropagation方法里面try catch住了hello方法抛出的异常，所以hello方法会回滚，但是testPropagation方法却可以正常执行并提交事务
+
+3.当hello方法的propagation属性设置为**REQUIRES_NEW**时，hello方法与testPropagation方法将会各自拥有自己的独立物理事务，这是与REQUIRED不同的地方，这一不同带来的作用可以使得hello方法回滚不影响testPropagation的外部事务执行。
+
+4.当hello方法的propagation属性设置为**NEVER**时，hello方法将不在事务中执行，这样hello方法自然也就不会影响testPropagation的事务执行
 
 
 
