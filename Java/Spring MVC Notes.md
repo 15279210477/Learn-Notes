@@ -248,5 +248,5 @@ public class AdminWebConfig implements WebMvcConfigurer {
 
 7. 页面成功渲染完成以后，也会倒序触发 afterCompletion
 
-![2021030102](F:\Learn\Learn-Notes\Images\2021030102.png)
+![2021030102](../\Images\2021030102.png)
 

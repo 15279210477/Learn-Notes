@@ -119,7 +119,7 @@ context.getBean("xxx");	// 获取指定bean对象
 
 #### 3.4、bean的作用域
 
-![image-20210210154004604](C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210210154004604.png)
+![image-20210210154004604](../Images/image-20210210154004604.png)
 
 > 1. 单例模式（Spring默认机制）
 >
@@ -265,11 +265,11 @@ ApplicationContext context = new AnnotationConfigApplicationContext(xxx.class);
 
 - 连接点（JointPoint）：与切入点匹配的执行点。
 
-  ![image-20210216101212236](C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210216101212236.png)
+  ![image-20210216101212236](../images/image-20210216101212236.png)
 
 **SpringAop中，通过Advice定义横切逻辑，Spring中支持五种类型的Adivce：**
 
-![image-20210216101336630](C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210216101336630.png)
+![image-20210216101336630](../images/image-20210216101336630.png)
 
 #### 7.2、使用Spring实现Aop
 
@@ -371,8 +371,6 @@ public void testPropagation(User user) {
   }
 }
 ````
-
-
 
 1.当hello方法的propagation属性设置为**REQUIRED**时，由于调用方已经有了事务，所以hello方法将与testPropagation方法共享一个事务（物理事务），但是在逻辑上hello方法与testPropagation将拥有自己的逻辑事务，这就意味着hello方法的事务异常会导致testPropagation方法事务也会回滚，最终导致整条物理事务执行失败（与我们平时的大多数需求相同），---需要注意的是这时候被调用方法与调用者方法必须在两个不同类中，否则不起作用！！！
 
