@@ -32,3 +32,26 @@ DNS1=119.29.29.29
 DNS2=8.8.8.8
 ```
 
+## 二、常用命令
+
+```shell
+# 查看磁盘使用情况
+df -h
+# 查看当前目录使用大小
+du -h --max-depth=1
+# 停止防火墙
+systemctl stop firewalld.service
+# 禁止防火墙开机启动
+systemctl disable firewalld.service
+
+# java environment
+export JAVA_HOME=/usr/java/jdk1.8.0_144
+export CLASSPATH=.:${JAVA_HOME}/jre/lib/rt.jar:${JAVA_HOME}/lib/dt.jar:${JAVA_HOME}/lib/tools.jar
+export PATH=$PATH:${JAVA_HOME}/bin
+# 使环境变量生效
+source /etc/profile
+
+# 查看指定端口占用情况
+lsof -i:8080
+```
+
