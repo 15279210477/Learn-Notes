@@ -32,6 +32,8 @@ DNS1=119.29.29.29
 DNS2=8.8.8.8
 ```
 
+-----------
+
 ## 二、常用命令
 
 ```shell
@@ -53,5 +55,8 @@ source /etc/profile
 
 # 查看指定端口占用情况
 lsof -i:8080
+# 开放指定端口
+firewall-cmd --permanent --zone=public --add-port=3306/tcp
+firewall-cmd --reload
 ```
 

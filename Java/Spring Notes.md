@@ -189,6 +189,13 @@ context.getBean("xxx");	// 获取指定bean对象
 
 ​	jdk自带注解，自动装配优先byname，其次bytype。
 
+```
+1.如果@Resource注解中指定了name属性，那么则只会根据name属性的值去找bean，如果找不到则报错。
+2.如果@Resource注解没有指定name属性，那么会先判断当前注入点名字（属性名字或方法参数名字）是不是存在Bean，如果存在，则直接根据注入点名字取获取bean，如果不存在，则会走@Autowired注解的逻辑，会根据注入点类型去找Bean*
+```
+
+
+
 小结（两个注解区别）：
 
 > - 都是用来自动装配的，都可以作用在属性字段上。
@@ -362,25 +369,67 @@ ApplicationContext context = new AnnotationConfigApplicationContext(xxx.class);
 ```
 
 ````java
-public void testPropagation(User user) {
-  testDAO.insertUser(user);
-  try{
-    innerClass.hello();
-  } catch(RuntimeException e){
-    // handle exception
-  }
-}
+Propagation propagation() default Propagation.REQUIRED;
+
+REQUIRED(0),
+SUPPORTS(1),
+MANDATORY(2),
+REQUIRES_NEW(3),
+NOT_SUPPORTED(4),
+NEVER(5),
+NESTED(6)
 ````
 
-1.当hello方法的propagation属性设置为**REQUIRED**时，由于调用方已经有了事务，所以hello方法将与testPropagation方法共享一个事务（物理事务），但是在逻辑上hello方法与testPropagation将拥有自己的逻辑事务，这就意味着hello方法的事务异常会导致testPropagation方法事务也会回滚，最终导致整条物理事务执行失败（与我们平时的大多数需求相同），---需要注意的是这时候被调用方法与调用者方法必须在两个不同类中，否则不起作用！！！
+1. #### REQUIRED
 
-2.当hello方法的propagation属性设置为**NESTED**时，这种传播特性是基于JDBC提供的savepoint特性，所以对其他非JDBC数据源无效。testPropagation在调用hello方法之前会保存一个savepoint，该特性会使得testPropagation方法与hello方法具有比REQUIRED更高的独立性，因为testPropagation方法里面try catch住了hello方法抛出的异常，所以hello方法会回滚，但是testPropagation方法却可以正常执行并提交事务
+```
+- 如果当前存在事务，则其他方法则加入这个事务，成为一个整体。
+- 如果当前方法没有事务，若子方法有事务注解标识，则新建一个事务，并且该子方法运行在该事务中。
+- 当前方法存在事务，则加入这个事务，使用同一个事务，所有方法事务回滚。
+```
 
-3.当hello方法的propagation属性设置为**REQUIRES_NEW**时，hello方法与testPropagation方法将会各自拥有自己的独立物理事务，这是与REQUIRED不同的地方，这一不同带来的作用可以使得hello方法回滚不影响testPropagation的外部事务执行。
+2. #### SUPPORTS
 
-4.当hello方法的propagation属性设置为**NEVER**时，hello方法将不在事务中执行，这样hello方法自然也就不会影响testPropagation的事务执行
+```
+- 如果当前没有事务，则不使用事务。
+- 如果当前有事务，则使用事务
+```
 
+3. #### MANDATORY
 
+```
+- 该传播属性强制必须存在一个事务，如果不存在，则抛出异常
+```
+
+4. #### REQUIRES_NEW
+
+```
+- 如果当前没有事务，则自己新建一个事务，并运行在该事务中
+- 如果当前有事务，则将事务挂起，直到新的事务提交或回滚
+```
+
+5. #### NOT_SUPPORTED
+
+```
+- 如果当前有事务，则把事务挂起，自己不使用该事务。
+- 如果当前没有事务，则也不执行事务。
+```
+
+6. #### NEVER
+
+```
+- 如果当前有事务存在，则抛出异常。（同上。不一样的地方是会抛异常）
+```
+
+7. #### NESTED
+
+```
+- 如果当前没有事务，则自己新建一个事务
+- 如果当前有事务，则开启子事务（嵌套事务），当前事务异常，则都会回滚。
+- 嵌套事务开始执行时, 它将取得一个savepoint，如果这个嵌套事务失败，我们将回滚到此savepoint（非事务回滚），嵌套事务是外部事务的一部分，只有外部事务结束后它才会被提交或回滚。
+外部事务存在时：内部方法异常会回滚至savepoint，同时异常抛至外部，然后才是主事务的rollback；外部方法异常时，会回滚主事务（包括子事务的事务回滚）。
+外部事务不存在时：相当于REQUIRES_NEW，内部为一个新事务。
+```
 
 
 

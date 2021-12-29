@@ -64,6 +64,12 @@ select o.name,c.sess_id,l.* from v$lock l, sysobjects o, v$sessions c where l.ta
 sp_close_session(sess_id);
 # 查询等待的事务
 select * from v$trxwait;
+# 查询当前用户连接数
+select count(*) from v$sessions where state='ACTIVE';
+# 查询最大连接数
+select SF_GET_PARA_VALUE(2,'MAX_SESSIONS');
+# 修改最大连接数
+ALTER SYSTEM SET 'MAX_SESSIONS' =1000 spfile;
 
 ```
 
@@ -81,6 +87,26 @@ select * from v$trxwait;
 
 > CLUSTER PRIMARY KEY 主键约束，指明指定列作为基表的聚集索引（也叫聚簇索引）主关键字；
 > NOT CLUSTER PRIMARY KEY 主键约束，指明指定列作为基表的非聚集索引主关键字；
+
+--------
+
+## 三、日志分类
+
+#### 1.重做日志
+
+> ​	重做日志（即 REDO 日志）指在 DM 数据库中添加、删除、修改对象，或者改变数据， DM 都会按照特定的格式，将这些操作执行的结果写入到当前的重做日志文件中。重做日志文 件以 log 为扩展名。每个 DM 数据库实例必须至少有 2 个重做日志文件，默认两个日志文件 为 DAMENG01.log、DAMENG02.log，这两个文件循环使用。
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
