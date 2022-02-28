@@ -6,6 +6,7 @@
 
 ```sql
 mysql -u root -proot	-- 连接数据库
+mysql -h 服务器ip地址 -P 3306 -u root -p
 update mysql.user set authentication_string=password('123456') where user='root' and Host = 'localhost';	-- 修改密码
 flush privileges;	-- 刷新权限
 show databases;	   -- 查看所有数据库
@@ -153,16 +154,16 @@ TRUNCATE [TABLE] table_name;
 **字符串函数**
 
 ```sql
- SELECT CHAR_LENGTH('狂神说坚持就能成功'); /*返回字符串包含的字符数*/
+ SELECT CHAR_LENGTH('abc'); /*返回字符串包含的字符数*/
  SELECT CONCAT('我','爱','程序');  /*合并字符串,参数可以有多个*/
  SELECT INSERT('我爱编程helloworld',1,2,'超级热爱');  /*替换字符串,从某个位置开始替换某个长度*/
  SELECT LOWER('KuangShen'); /*小写*/
  SELECT UPPER('KuangShen'); /*大写*/
  SELECT LEFT('hello,world',5);   /*从左边截取*/
  SELECT RIGHT('hello,world',5);  /*从右边截取*/
- SELECT REPLACE('狂神说坚持就能成功','坚持','努力');  /*替换字符串*/
- SELECT SUBSTR('狂神说坚持就能成功',4,6); /*截取字符串,开始和长度*/
- SELECT REVERSE('狂神说坚持就能成功'); /*反转
+ SELECT REPLACE('abc','b','a');  /*替换字符串*/
+ SELECT SUBSTR('abcdef',4,6); /*截取字符串,开始和长度*/
+ SELECT REVERSE('abc'); /*反转
  -- 查询姓周的同学,改成邹
  SELECT REPLACE(studentname,'周','邹') AS 新名字
  FROM student WHERE studentname LIKE '周%';
@@ -207,7 +208,7 @@ TRUNCATE [TABLE] table_name;
 
 **一致性(Consist)**
 
-- ==执⾏事务前后，数据保持⼀致==，多个事务对同⼀个数据读取的结果是相同的。
+- ==执⾏事务前后，数据保持⼀致，多个事务对同⼀个数据读取的结果是相同的==。
 
 **隔离性(Isolated)**
 
@@ -308,7 +309,9 @@ RELEASE SAVEPOINT 保存点名称 -- 删除保存点
 
 ## 九、Mysql日志
 
-#### 9.1、binlog日志
+> 默认情况下，这些日志都是出于未激活的状态。当激活日志时，所有的日志都默认配置在数据文件的目录下。
+
+#### 9.1、二进制日志（binlog）
 
 > 主要用于记录数据库的变化情况，即 SQL 语句的 DDL 和 DML 语句，不包含数据记录查询操作。
 >
@@ -356,17 +359,101 @@ mysqlbinlog --stop-position=1709 /var/mysql/data/mysql-bin.000004 > /tmp/binlog.
 mysql > source xxx.sql
 ```
 
+#### 9.2、错误日志（error log）
 
+> 用于记录MYSQL服务进程mysqld在启动/关闭或运行过程中遇到的错误信息。
 
+```sql
+-- 配置错误日志位置
+log-error=/data/mysql/error.err
 
+-- 查询日志参数配置
+show variables like ‘log_error%’;
+```
 
+#### 9.3、慢查询日志（slow query log）
 
+> 慢查询日志（slow query log）就是记录执行时间超出指定值（long_query_time）或其他指定条件（例如，没有使用到索引，结果集大于n行(指定行））的SQL语句。慢查询日志的参数对于数据库的优化是非常重要的，也是sql优化的前提。
 
+![2019051719011743.png](../images/2019051719011743.png)
 
+#### 9.4、中继日志（relay log）
 
+> relay log是复制过程中产生的日志，很多方面都跟binary log差不多，区别是: relay log是从库服务器I/O线程将主库服务器的二进制日志读取过来记录到从库服务器本地文件，然后从库的SQL线程会读取relay-log日志的内容并应用到从库服务器上。==用于保存主服务器的二进制日志中读取到的事件==。
 
+```sql
+-- 定义relay_log的位置和名称，如果值为空，则默认位置在数据文件的目录，文件名为host_name-relay-bin.nnnnnn
+relay_log
 
+-- 标记relay log 允许的最大值，如果该值为0，则默认值为max_binlog_size(1G)；如果不为0，max_relay_log_size则为最大的relay_log文件大小
+max_relay_log_size
 
+-- 同relay_log，定义relay_log的位置和名称；
+relay_log_index
+
+-- 设置relay-log.info的位置和名称（relay-log.info记录MASTER的binary_log的恢复位置和relay_log的位置）
+relay_log_info_file
+
+-- 是否自动清空不再需要中继日志时。默认值为1(启用)。
+relay_log_purge
+
+-- 当slave从库宕机后，假如relay-log损坏了，导致一部分中继日志没有处理，则自动放弃所有未执行的relay-log，并且重新从master上获取日志，这样就保证了relay-log的完整性。默认情况下该功能是关闭的，将relay_log_recovery的值设置为 1时，可在slave从库上开启该功能，建议开启。
+relay_log_recovery
+
+-- 防止中继日志写满磁盘，这里设置中继日志最大限额。但此设置存在主库崩溃，从库中继日志不全的情况，不到万不得已，不推荐使用；
+relay_log_space_limit
+
+-- 这个参数和sync_binlog是一样的，当设置为1时，slave的I/O线程每次接收到master发送过来的binlog日志都要写入系统缓冲区，然后刷入relay log中继日志里，这样是最安全的，因为在崩溃的时候，你最多会丢失一个事务，但会造成磁盘的大量I/O。当设置为0时，并不是马上就刷入中继日志里，而是由操作系统决定何时来写入，虽然安全性降低了，但减少了大量的磁盘I/O操作。这个值默认是0，可动态修改。
+sync_relay_log
+
+-- 这个参数和sync_relay_log参数一样，当设置为1时，slave的I/O线程每次接收到master发送过来的binlog日志都要写入系统缓冲区，然后刷入http://relay-log.info里，这样是最安全的，因为在崩溃的时候，你最多会丢失一个事务，但会造成磁盘的大量I/O。当设置为0时，并不是马上就刷入http://relay-log.info里，而是由操作系统决定何时来写入，虽然安全性降低了，但减少了大量的磁盘I/O操作。这个值默认是0，可动态修改。
+sync_relay_log_info
+```
+
+#### 9.5、查询日志（general log）
+
+> 查询日志在mysql中称为general log（通用日志），==查询日志记录了数据库执行的命令==，不管这些语句是否正确，都会被记录。由于数据库操作命令有可能非常多而且执行比较频繁，所以开启了查询日志以后，数据库可能需要不停的写入查询日志，这样会==增大服务器的IO压力==，增加很多系统开销，影响数据库的性能，所以默认情况下是关闭的，也不建议开启。
+
+```sql
+general_log：                指定是否开启查询日志（ON表示开启，OFF表示未开启，默认OFF）
+general_log_file：           当log_output设置为“FILE”时，指定将查询日志保存成哪个文件、叫什么名，默认与主机名相同，一般位于/var/lib/mysql目录下
+log_output： 　　　　　　　　　 指定将记录到的查询保存到什么位置（“NONE”、“FILE”、“TABLE”、“FILE,TABLE”）
+file：                       保存成一个文件
+table：                      保存成一张表
+none：                       不记录
+```
+
+#### 9.6、重做日志（redo log）
+
+> **作用**：
+>
+> ​		==确保事务的持久性。redo日志记录事务执行后的状态，用来恢复未写入data file的已成功事务更新的数据==。防止在发生故障的时间点，尚有脏页未写入磁盘，在重启[mysql](https://www.2cto.com/database/MySQL/)服务的时候，根据redo log进行重做，从而达到事务的持久性这一特性。
+>
+> **什么时候产生：**
+>
+> 　　事务开始之后就产生redo log，redo log的落盘并不是随着事务的提交才写入的，而是在事务的执行过程中，便开始写入redo log文件中。
+>
+> **什么时候释放：**
+>
+> 　　当对应事务的脏页写入到磁盘之后，redo log的使命也就完成了，重做日志占用的空间就可以重用（被覆盖）。
+
+#### 9.7、回滚日志（undo log）
+
+> **作用：**
+>
+> 　　保证数据的原子性，保存了事务发生之前的数据的一个版本，可以用于回滚，同时可以提供多版本并发控制下的读（MVCC），也即非锁定读。
+>
+> **内容：**
+>
+> 　　逻辑格式的日志，在执行undo的时候，仅仅是将数据从逻辑上恢复至事务之前的状态，而不是从物理页面上操作实现的，这一点是不同于redo log的。
+>
+> **什么时候产生：**
+>
+> 　　事务开始之前，将当前是的版本生成undo log，undo 也会产生 redo 来保证undo log的可靠性。
+>
+> **什么时候释放：**
+>
+> 　　当事务提交之后，undo log并不能立马被删除，而是放入待清理的链表，由purge线程判断是否由其他事务在使用undo段中表的上一个事务之前的版本信息，决定是否可以清理undo log的日志空间。
 
 
 

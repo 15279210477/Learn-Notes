@@ -27,6 +27,8 @@ options：
 
 **docker rmi [镜像名]：** 删除镜像
 
+**docker build [OPTIONS] PATH | URL | -：**构建镜像
+
 **docker run [OPTIONS] IMAGE [COMMAND] [ARG...]:** 新建并启动容器
 
 options:
@@ -83,7 +85,7 @@ options：
 
 **docker inspect [容器ID]：** 查看容器内部细节
 
-**dockedr exec -it [容器ID] [bashShell]：** 进入正在运行的容器并以命令行交互
+**docker exec -it [容器ID] [bashShell]：** 进入正在运行的容器并以命令行交互(/bin/bash)
 
 **docker attach [容器ID]：** 重新进入容器
 

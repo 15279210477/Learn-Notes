@@ -357,7 +357,7 @@ ApplicationContext context = new AnnotationConfigApplicationContext(xxx.class);
 </aop:config>
 ```
 
-### 8.3、事务的传播特性
+#### 8.3、事务的传播特性
 
 ```xml
 <tx:advice id="xxAdvice" transaction-manager="xxTransactionManager">
@@ -380,7 +380,7 @@ NEVER(5),
 NESTED(6)
 ````
 
-1. #### REQUIRED
+1. #### REQUIRED（默认）
 
 ```
 - 如果当前存在事务，则其他方法则加入这个事务，成为一个整体。
@@ -401,7 +401,7 @@ NESTED(6)
 - 该传播属性强制必须存在一个事务，如果不存在，则抛出异常
 ```
 
-4. #### REQUIRES_NEW
+4. #### REQUIRES_NEW（独立事务）
 
 ```
 - 如果当前没有事务，则自己新建一个事务，并运行在该事务中
@@ -421,7 +421,7 @@ NESTED(6)
 - 如果当前有事务存在，则抛出异常。（同上。不一样的地方是会抛异常）
 ```
 
-7. #### NESTED
+7. #### NESTED（嵌套事务）
 
 ```
 - 如果当前没有事务，则自己新建一个事务

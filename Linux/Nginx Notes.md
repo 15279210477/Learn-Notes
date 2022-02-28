@@ -120,9 +120,19 @@ http {
            #index vv.txt;  #设置默认页
            proxy_pass  http://mysvr;  #请求转向mysvr 定义的服务器列表
            deny 127.0.0.1;  #拒绝的ip
-           allow 172.18.5.54; #允许的ip           
+           allow 172.18.5.54; #允许的ip    
+           try_files $uri $uri/ /index.html?$query_string;
         } 
     }
 }
 ```
 
+#### 3.3、配置详解
+
+**try_files**：
+
+```bash
+try_files：当用户请求 http://localhost/example 时，这里的 $uri 就是 /example。
+try_files 会到硬盘里尝试找这个文件。如果存在名为 $root/example（其中 $root 是项目代码安装目录）的文件，就直接把这个文件的内容发送给用户。
+如果目录中没有叫 example 的文件。然后就看 $uri/，增加了一个 /，也就是看有没有名为 /$root/example/ 的目录。 如果也找不到，会对最后一个参数进行一个内部重定向。且只有最后一个参数可以引起一个内部重定向（最后一个参数是请求URI且必须存在，否则将会出现内部500错误），try_files 的最后一个选项 /index.php，发起一个内部 “子请求”，也就是相当于 nginx 发起一个 HTTP 请求到 http://localhost/index.php。
+```

@@ -58,5 +58,18 @@ lsof -i:8080
 # 开放指定端口
 firewall-cmd --permanent --zone=public --add-port=3306/tcp
 firewall-cmd --reload
+
+# 开放指定权限
+chmod 777 绝对路径
+
+# 添加用户/修改密码/删除用户
+adduser dm
+passwd dm
+userdel dm
+# 赋予root权限
+vi /etc/sudoers
+## Allow root to run any commands anywhere
+root    ALL=(ALL)     ALL
+dm   ALL=(ALL)     ALL
 ```
 

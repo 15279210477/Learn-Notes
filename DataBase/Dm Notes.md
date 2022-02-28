@@ -7,7 +7,7 @@
 create tablespace zh202 datafile '/home/dm/data/ZH202_VM/ZH202.DBF' size 128 autoextend on next 4 maxsize 2048;
 
 -- 创建数据库实例（shell）
-./dminit PATH=/home/dm/data PAGE_SIZE=16 CASE_SENSITIVE=N CHARSET=1 SYSDBA_PWD=ZH202123456! DB_NAME=ZH202_VM INSTANCE_NAME=ZH202_VM
+./dminit PATH=/home/dmdba/dmdbms/data PAGE_SIZE=16 CASE_SENSITIVE=N CHARSET=1 LENGTH_IN_CHAR=1 SYSDBA_PWD=ZH202123456! DB_NAME=ZH202 INSTANCE_NAME=ZH202
 
 -- 启动达梦数据库（shell）
 ./dmserver /home/dm/data/ZH202_VM/dm.ini -noconsole
@@ -71,6 +71,11 @@ select SF_GET_PARA_VALUE(2,'MAX_SESSIONS');
 # 修改最大连接数
 ALTER SYSTEM SET 'MAX_SESSIONS' =1000 spfile;
 
+# 查询事务等待信息/再通过trx_id查询对应会话
+select * from v$trxwait;
+select * from v$sessions where trx_id = '';
+#  查看事务执行语句
+select * from V$SQL_HISTORY where trx_id = '';
 ```
 
 -----

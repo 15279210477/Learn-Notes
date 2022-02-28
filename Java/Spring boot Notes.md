@@ -60,7 +60,9 @@
 
 @**ConfiguragionProperties**：配置绑定，可以读取配置文件进行属性的赋值，value为属性名。搭配component使用。
 
-@**EnableConfiguragionProperties**：配置绑定，value为指定绑定的类。可作用在javaconfig配置类上。
+@**EnableConfiguragionProperties**：配置绑定，value为指定绑定的类。可作用在javaconfig配置类上或者启动类。
+
+@**ConditionalOnProperty**：动态设置配置属性是否生效。
 
 ------
 
